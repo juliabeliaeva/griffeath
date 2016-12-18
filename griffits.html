@@ -1,23 +1,40 @@
 <!DOCTYPE html>
 <html>
-<head><title>Cellular Automaton</title></head>
-<script type="text/javascript" src="js/chambered.js"></script>
+<head><title>Griffits Cellular Automaton</title></head>
 <style type="text/css">
-    canvas, img {
-        width:960px;
-        height:960px;
+    #game {
+      background-color: black;
+      position: absolute;
+      left: 0px;
+      top: 0px;
+      z-index: 0;
+      padding: 0px;
+      margin: 0px;
+    }
+
+    #controls {
+      z-index: 5;
+      position: absolute;
+      background-color: rgba(30, 30, 30, 0.6);
+      padding: 20px;
+      margin: 20px;
+
+      user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
+      -o-user-select: none;
     }
 
 </style>
 
 <body>
-<form action="">
+<form id= "controls" action="">
     <input type="button" value="Play/Pause" id="start"/>
     <input type="button" value="Clear" id="clear"/>
     <input type="button" value="Randomize" id="randomize"/>
 </form>
-<br>
-<canvas id="game" width="960" height="960"></canvas>
-<script type="text/javascript">init();</script>
+<canvas id="game" width="0" height="0"></canvas>
+<script type="text/javascript" src="griffits.js"></script>
 </body>
 </html>

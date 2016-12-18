@@ -1,58 +1,45 @@
-// game
-var w = 960;
-var h = 960;
+function $(id) {
+    return document.getElementById(id);
+}
+
+$('start').onclick = function() {
+    onStart();
+};
+$('clear').onclick = function() {
+    clear();
+};
+$('randomize').onclick = function() {
+    randomize();
+};
+
+var canvas = $('game');
+canvas.width  = window.innerWidth;
+canvas.height = window.innerHeight;
+canvas.addEventListener("click", onClick, false);
+var ctx = canvas.getContext('2d');
+
+var cell = 5;
+var w = Math.ceil(canvas.width / cell);
+var h = Math.ceil(canvas.height / cell);
 var n = 15;
 var alive = new Array(w * h);
 var tmp = new Array(w * h);
-var started = false;
 
-// pic
-var ctx;
-var pixels;
-var cell = 1;
-var element;
-var colors = [82, 75, 155,
-              255, 200, 35,
-              0, 0, 255,
-              255, 0, 0,
-              0, 255, 0];
-
-function init() {
-    document.getElementById('start').onclick = function() {
-        onStart();
-    };
-    document.getElementById('clear').onclick = function() {
-        clear();
-    };
-    document.getElementById('randomize').onclick = function() {
-        randomize();
-    };
-    element = document.getElementById('game');
-    element.addEventListener("click", onClick, false);
-
-    ctx = element.getContext('2d');
-
-    pixels = ctx.createImageData(w * cell, h * cell);
-
-    for (var i = 0; i < w * h * cell * cell; i++) {
-        pixels.data[i * 4 + 3] = 255;
-    }
-
-    for (var i = 0; i < w * h; i++) {
-        alive[i] = 0;
-    }
-
-    setInterval(clock, 100);
+var pixels = ctx.createImageData(w * cell, h * cell);
+for (var i = 0; i < w * h * cell * cell; i++) {
+    pixels.data[i * 4 + 3] = 255;
 }
+randomize();
 
+setInterval(clock, 100);
 function clock() {
     updateGame();
     render();
     ctx.putImageData(pixels, 0, 0);
 }
 
-var f = 0;
-
+var started = false;
+var iteration = 0;
 function updateGame() {
     if (!started) return;
     for (var x = 0; x < w; x++) {
@@ -86,7 +73,7 @@ function updateGame() {
     var swap = tmp;
     tmp = alive;
     alive = swap;
-    f++;
+    iteration++;
 }
 
 function render() {
@@ -106,6 +93,7 @@ function render() {
 }
 
 function onClick(e) {
+  console.log("click")
     if (started) return;
     var x;
     var y;
@@ -116,8 +104,8 @@ function onClick(e) {
         x = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
         y = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
     }
-    x -= element.offsetLeft;
-    y -= element.offsetTop;
+    x -= canvas.offsetLeft;
+    y -= canvas.offsetTop;
 
     x = Math.max(0, Math.floor(x / cell));
     y = Math.max(0, Math.floor(y / cell));
@@ -128,6 +116,7 @@ function onClick(e) {
 
 function onStart() {
     started = !started;
+    if (started) iteration = 0;
     render();
 }
 
@@ -146,5 +135,3 @@ function randomize() {
     }
     render();
 }
-
-init();
