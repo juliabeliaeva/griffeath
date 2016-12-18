@@ -26,13 +26,28 @@
       -o-user-select: none;
     }
 
+    .btn {
+      font-family: Arial;
+      color: #ffffff;
+      font-size: 14px;
+      padding: 10px;
+      background: rgb(30, 30, 30);
+      text-decoration: none;
+      border: none;
+    }
+
+    .btn:hover {
+      background: rgb(60, 60, 60);
+      text-decoration: none;
+    }
+
 </style>
 
 <body>
 <form id= "controls" action="">
-    <input type="button" value="Play/Pause" id="start"/>
-    <input type="button" value="Clear" id="clear"/>
-    <input type="button" value="Randomize" id="randomize"/>
+    <input type="button" class="btn" value="Play/Pause" id="start"/>
+    <input type="button" class="btn" value="Clear" id="clear"/>
+    <input type="button" class="btn" value="Randomize" id="randomize"/>
 </form>
 <canvas id="game" width="0" height="0"></canvas>
 <script type="text/javascript" src="griffits.js"></script>
