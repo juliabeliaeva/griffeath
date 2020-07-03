@@ -32,6 +32,7 @@ class Field {
     }
 
     update() {
+        var changed = false;
         for (var x = 0; x < this.w; x++) {
             for (var y = 0; y < this.h; y++) {
                 var next = (this.alive[x + y * this.w] + 1) % this.n;
@@ -55,6 +56,7 @@ class Field {
                         }
                         if (this.alive[ii + jj * this.w] == next) {
                             this.tmp[x + y * this.w] = next;
+                            changed = true;
                         }
                     }
                 }
@@ -63,6 +65,8 @@ class Field {
         var swap = this.tmp;
         this.tmp = this.alive;
         this.alive = swap;
+
+        return changed;
     }
 
     randomize() {
@@ -101,9 +105,12 @@ updateUI();
 setInterval(clock, 100);
 function clock() {
     if (!started) return;
-    field.update();
+    var changed = field.update();
     iteration++;
     render();
+    if (!changed) {
+        started = false;
+    }
     updateUI();
 }
 
