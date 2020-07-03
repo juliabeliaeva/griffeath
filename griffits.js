@@ -15,8 +15,14 @@ $('randomize').onclick = function() {
 function updateUI() {
     if (started) {
         $('start').value = "Pause"
+        $('info').innerHTML = "Iteration " + iteration;
     } else {
         $('start').value = "Play"
+        if (iteration == 0) {
+            $('info').innerHTML = "Stopped";
+        } else {
+            $('info').innerHTML = "Stopped after " + iteration + " iterations";
+        }
     }
     $('clear').disabled = started;
     $('randomize').disabled = started;
@@ -164,11 +170,15 @@ function onStart() {
 function clear() {
     if (started) return;
     field.clear();
+    iteration = 0;
     render();
+    updateUI();
 }
 
 function randomize() {
     if (started) return;
     field.randomize();
+    iteration = 0;
     render();
+    updateUI();
 }

@@ -12,7 +12,7 @@
       margin: 0px;
     }
 
-    #controls {
+    #panel {
       z-index: 5;
       position: absolute;
       background-color: rgba(30, 30, 30, 0.6);
@@ -24,6 +24,16 @@
       -khtml-user-select: none;
       -webkit-user-select: none;
       -o-user-select: none;
+    }
+
+    #info {
+      font-family: Arial;
+      color: #ffffff;
+      font-size: 12px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: rgba(30, 30, 30, 0.6);
     }
 
     .btn {
@@ -51,11 +61,14 @@
 </style>
 
 <body>
-<form id= "controls" action="">
-    <input type="button" class="btn" value="Play" id="start"/>
-    <input type="button" class="btn" value="Clear" id="clear"/>
-    <input type="button" class="btn" value="Randomize" id="randomize"/>
-</form>
+<div id="panel">
+    <form id="controls" action="">
+        <input type="button" class="btn" value="Play" id="start"/>
+        <input type="button" class="btn" value="Clear" id="clear"/>
+        <input type="button" class="btn" value="Randomize" id="randomize"/>
+    </form>
+    <div id="info"></div>
+</div>
 <canvas id="game" width="0" height="0"></canvas>
 <script type="text/javascript" src="griffits.js"></script>
 </body>
