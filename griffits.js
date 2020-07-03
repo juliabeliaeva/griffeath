@@ -12,6 +12,16 @@ $('randomize').onclick = function() {
     randomize();
 };
 
+function updateUI() {
+    if (started) {
+        $('start').value = "Pause"
+    } else {
+        $('start').value = "Play"
+    }
+    $('clear').disabled = started;
+    $('randomize').disabled = started;
+}
+
 var canvas = $('game');
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
@@ -36,10 +46,14 @@ function clock() {
     updateGame();
     render();
     ctx.putImageData(pixels, 0, 0);
+    updateUI();
 }
 
 var started = false;
 var iteration = 0;
+
+updateUI();
+
 function updateGame() {
     if (!started) return;
     for (var x = 0; x < w; x++) {
@@ -93,8 +107,10 @@ function render() {
 }
 
 function onClick(e) {
-  console.log("click")
+    console.log("click")
+
     if (started) return;
+
     var x;
     var y;
     if (e.pageX != undefined && e.pageY != undefined) {
