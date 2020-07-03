@@ -22,81 +22,98 @@ function updateUI() {
     $('randomize').disabled = started;
 }
 
+class Field {
+    constructor(width, height) {
+        this.w = width;
+        this.h = height;
+        this.n = 15;
+        this.alive = new Array(this.w * this.h);
+        this.tmp = new Array(this.w * this.h);
+    }
+
+    update() {
+        for (var x = 0; x < this.w; x++) {
+            for (var y = 0; y < this.h; y++) {
+                var next = (this.alive[x + y * this.w] + 1) % this.n;
+                this.tmp[x + y * this.w] = this.alive[x + y * this.w];
+                for (var i = -1; i < 2; i++) {
+                    for (var j = -1; j < 2; j++) {
+                        if ((i * i) == (j * j)) {
+                            continue;
+                        }
+                        var ii = x + i;
+                        var jj = y + j;
+                        if (ii < 0) {
+                            ii += this.w;
+                        } else if (ii == this.w) {
+                            ii -= this.w;
+                        }
+                        if (jj < 0) {
+                            jj += this.h;
+                        } else if (jj == this.h) {
+                            jj -= this.h;
+                        }
+                        if (this.alive[ii + jj * this.w] == next) {
+                            this.tmp[x + y * this.w] = next;
+                        }
+                    }
+                }
+            }
+        }
+        var swap = this.tmp;
+        this.tmp = this.alive;
+        this.alive = swap;
+    }
+
+    randomize() {
+        for (var i = 0; i < this.w * this.h; i++) {
+            this.alive[i] = Math.floor(Math.random() * this.n) % this.n;
+        }
+    }
+
+    clear() {
+        for (var i = 0; i < this.w * this.h; i++) {
+            this.alive[i] = 0;
+        }
+    }
+}
+
 var canvas = $('game');
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.addEventListener("click", onClick, false);
 var ctx = canvas.getContext('2d');
-
 var cell = 5;
-var w = Math.ceil(canvas.width / cell);
-var h = Math.ceil(canvas.height / cell);
-var n = 15;
-var alive = new Array(w * h);
-var tmp = new Array(w * h);
+var field = new Field(Math.ceil(canvas.width / cell), Math.ceil(canvas.height / cell));
 
-var pixels = ctx.createImageData(w * cell, h * cell);
-for (var i = 0; i < w * h * cell * cell; i++) {
-    pixels.data[i * 4 + 3] = 255;
-}
-randomize();
-
-setInterval(clock, 100);
-function clock() {
-    updateGame();
-    render();
-    ctx.putImageData(pixels, 0, 0);
-    updateUI();
+var pixels = ctx.createImageData(field.w * cell, field.h * cell);
+for (var i = 0; i < field.w * field.h * cell * cell; i++) {
+   pixels.data[i * 4 + 3] = 255;
 }
 
 var started = false;
 var iteration = 0;
 
+field.randomize();
+render();
 updateUI();
 
-function updateGame() {
+setInterval(clock, 100);
+function clock() {
     if (!started) return;
-    for (var x = 0; x < w; x++) {
-        for (var y = 0; y < h; y++) {
-            var next = (alive[x + y * w] + 1) % n;
-            tmp[x + y * w] = alive[x + y * w];
-            for (var i = -1; i < 2; i++) {
-                for (var j = -1; j < 2; j++) {
-                    if ((i * i) == (j * j)) {
-                        continue;
-                    }
-                    var ii = x + i;
-                    var jj = y + j;
-                    if (ii < 0) {
-                        ii += w;
-                    } else if (ii == w) {
-                        ii -= w;
-                    }
-                    if (jj < 0) {
-                        jj += h;
-                    } else if (jj == h) {
-                        jj -= h;
-                    }
-                    if (alive[ii + jj * w] == next) {
-                        tmp[x + y * w] = next;
-                    }
-                }
-            }
-        }
-    }
-    var swap = tmp;
-    tmp = alive;
-    alive = swap;
+    field.update();
     iteration++;
+    render();
+    updateUI();
 }
 
 function render() {
-    for (var x = 0; x < w; x++) {
-        for (var y = 0; y < h; y++) {
-            var color = (Math.floor(alive[x + y * w] * 255 / n)) % 255;
+    for (var x = 0; x < field.w; x++) {
+        for (var y = 0; y < field.h; y++) {
+            var color = (Math.floor(field.alive[x + y * field.w] * 255 / field.n)) % 255;
             for (var i = 0; i < cell; i++) {
                 for (var j = 0; j < cell; j++) {
-                    var pixel = x * cell + i + ((y * cell + j) * w * cell);
+                    var pixel = x * cell + i + ((y * cell + j) * field.w * cell);
                     for (var c = 0; c < 3; c++) {
                         pixels.data[pixel * 4 + c] = color;
                     }
@@ -104,6 +121,7 @@ function render() {
             }
         }
     }
+    ctx.putImageData(pixels, 0, 0);
 }
 
 function onClick(e) {
@@ -126,28 +144,24 @@ function onClick(e) {
     x = Math.max(0, Math.floor(x / cell));
     y = Math.max(0, Math.floor(y / cell));
 
-    alive[x + y * w] = (alive[x + y * w] + 1) % n;
+    field.alive[x + y * field.w] = (field.alive[x + y * field.w] + 1) % field.n;
     render();
 }
 
 function onStart() {
     started = !started;
     if (started) iteration = 0;
-    render();
+    updateUI();
 }
 
 function clear() {
     if (started) return;
-    for (var i = 0; i < w * h; i++) {
-        alive[i] = 0;
-    }
+    field.clear();
     render();
 }
 
 function randomize() {
     if (started) return;
-    for (var i = 0; i < w * h; i++) {
-        alive[i] = Math.floor(Math.random() * n) % n;
-    }
+    field.randomize();
     render();
 }
