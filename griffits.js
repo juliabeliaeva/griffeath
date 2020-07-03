@@ -15,17 +15,22 @@ $('randomize').onclick = function() {
 function updateUI() {
     if (started) {
         $('start').value = "Pause"
-        $('info').innerHTML = "Iteration " + iteration;
+        $('info').innerHTML = "Iteration " + iteration + "<br/>" + selectedInformation();
     } else {
         $('start').value = "Play"
         if (iteration == 0) {
-            $('info').innerHTML = "Stopped";
+            $('info').innerHTML = selectedInformation();
         } else {
-            $('info').innerHTML = "Stopped after " + iteration + " iterations";
+            $('info').innerHTML = "Stopped after " + iteration + " iterations" + "<br/>" + selectedInformation();
         }
     }
     $('clear').disabled = started;
     $('randomize').disabled = started;
+}
+
+function selectedInformation() {
+    if (selectedX < 0 || selectedY < 0) return ""
+    return "[" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w]
 }
 
 class Field {
@@ -92,6 +97,7 @@ var canvas = $('game');
 canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.addEventListener("click", onClick, false);
+canvas.addEventListener("mousemove", onHover, false);
 var ctx = canvas.getContext('2d');
 var cell = 5;
 var field = new Field(Math.ceil(canvas.width / cell), Math.ceil(canvas.height / cell));
@@ -100,6 +106,9 @@ var pixels = ctx.createImageData(field.w * cell, field.h * cell);
 for (var i = 0; i < field.w * field.h * cell * cell; i++) {
    pixels.data[i * 4 + 3] = 255;
 }
+
+var selectedX = -1;
+var selectedY = -1;
 
 var started = false;
 var iteration = 0;
@@ -134,14 +143,22 @@ function render() {
             }
         }
     }
-    ctx.putImageData(pixels, 0, 0);
+    updateCanvas();
 }
 
-function onClick(e) {
-    console.log("click")
+function updateCanvas() {
+    ctx.putImageData(pixels, 0, 0);
 
-    if (started) return;
+    if (selectedX < 0 || selectedY < 0) return;
 
+    ctx.beginPath();
+    ctx.lineWidth = "1";
+    ctx.strokeStyle = "red";
+    ctx.rect(selectedX * cell, selectedY * cell, cell, cell);
+    ctx.stroke();
+}
+
+function getLocation(e) {
     var x;
     var y;
     if (e.pageX != undefined && e.pageY != undefined) {
@@ -157,8 +174,32 @@ function onClick(e) {
     x = Math.max(0, Math.floor(x / cell));
     y = Math.max(0, Math.floor(y / cell));
 
+    return {x: x, y: y}
+}
+
+function onClick(e) {
+    console.log("click")
+
+    if (started) return;
+
+    var location = getLocation(e)
+    x = location.x;
+    y = location.y;
+
     field.alive[x + y * field.w] = (field.alive[x + y * field.w] + 1) % field.n;
+
     render();
+    updateUI();
+}
+
+function onHover(e) {
+    var location = getLocation(e)
+
+    selectedX = location.x;
+    selectedY = location.y;
+
+    render();
+    updateUI();
 }
 
 function onStart() {
