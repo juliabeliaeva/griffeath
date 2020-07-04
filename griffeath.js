@@ -90,6 +90,7 @@ class Field {
                     if (this.alive[ii + jj * this.w] == next) {
                         this.tmp[x + y * this.w] = next;
                         changed = true;
+                        break;
                     }
                 }
             }
