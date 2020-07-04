@@ -15,7 +15,7 @@
     #control-panel {
       z-index: 5;
       position: absolute;
-      background-color: rgba(30, 30, 30, 0.6);
+      background-color: rgba(30, 30, 30, 0.7);
       padding: 20px;
       margin: 20px;
 
@@ -32,8 +32,6 @@
       font-size: 12px;
       margin-top: 10px;
       margin-bottom: 10px;
-      padding: 10px;
-      background-color: rgba(30, 30, 30, 0.6);
     }
 
     .btn {
@@ -62,16 +60,16 @@
     #title {
         font-size: 16px;
     }
+
+    #controls {
+        margin-left: auto;
+        margin-right: auto;
+    }
 </style>
 
 <body>
 <div id="control-panel">
     <div class="panel" id="title">2D Cyclic Cellular Automaton</div>
-    <form id="controls" action="">
-        <input type="button" class="btn" value="Play" id="start"/>
-        <input type="button" class="btn" value="Clear" id="clear"/>
-        <input type="button" class="btn" value="Randomize" id="randomize"/>
-    </form>
     <div class="panel">
         <form id="settings">
             <input type="radio" name="neighborhood" id="radio-8" value="8"/>
@@ -81,6 +79,11 @@
             <label for="radio-4">4-neighborhood (von Neumann)</label>
         </form>
     </div>
+    <form id="controls" action="">
+        <input type="button" class="btn" value="Play" id="start"/>
+        <input type="button" class="btn" value="Clear" id="clear"/>
+        <input type="button" class="btn" value="Randomize" id="randomize"/>
+    </form>
     <div class="panel" id="info"></div>
 </div>
 <canvas id="game" width="0" height="0"></canvas>
