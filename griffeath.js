@@ -11,6 +11,11 @@ $('clear').onclick = function() {
 $('randomize').onclick = function() {
     randomize();
 };
+$('radio-8').onchange = function() {
+    var value = document.querySelector('input[name="neighborhood"]:checked').value
+    field.setVonNeumannNeighborhood(value == "4")
+}
+$('radio-4').onchange = $('radio-8').onchange
 
 function updateUI() {
     if (started) {
@@ -26,6 +31,12 @@ function updateUI() {
     }
     $('clear').disabled = started;
     $('randomize').disabled = started;
+    $('settings').disabled = started;
+    if (field.isVonNeumann) {
+        $('radio-4').checked = true
+    } else {
+        $('radio-8').checked = true
+    }
 }
 
 function selectedInformation() {
@@ -40,35 +51,44 @@ class Field {
         this.n = 15;
         this.alive = new Array(this.w * this.h);
         this.tmp = new Array(this.w * this.h);
+        this.isVonNeumann = true;
+    }
+
+    setVonNeumannNeighborhood(value) {
+        this.isVonNeumann = value;
+    }
+
+    getNeighborhood(value) {
+        if (value) {
+            return [[0, -1], [0, 1], [1, 0], [-1, 0]]
+        } else {
+            return [[-1, -1], [-1, 1], [1, -1], [1, 1], [0, -1], [0, 1], [1, 0], [-1, 0]]
+        }
     }
 
     update() {
         var changed = false;
+        var neighborhood = this.getNeighborhood(this.isVonNeumann);
         for (var x = 0; x < this.w; x++) {
             for (var y = 0; y < this.h; y++) {
                 var next = (this.alive[x + y * this.w] + 1) % this.n;
                 this.tmp[x + y * this.w] = this.alive[x + y * this.w];
-                for (var i = -1; i < 2; i++) {
-                    for (var j = -1; j < 2; j++) {
-                        if ((i * i) == (j * j)) {
-                            continue;
-                        }
-                        var ii = x + i;
-                        var jj = y + j;
-                        if (ii < 0) {
-                            ii += this.w;
-                        } else if (ii == this.w) {
-                            ii -= this.w;
-                        }
-                        if (jj < 0) {
-                            jj += this.h;
-                        } else if (jj == this.h) {
-                            jj -= this.h;
-                        }
-                        if (this.alive[ii + jj * this.w] == next) {
-                            this.tmp[x + y * this.w] = next;
-                            changed = true;
-                        }
+                for (var ij of neighborhood) {
+                    var ii = x + ij[0];
+                    var jj = y + ij[1];
+                    if (ii < 0) {
+                        ii += this.w;
+                    } else if (ii == this.w) {
+                        ii -= this.w;
+                    }
+                    if (jj < 0) {
+                        jj += this.h;
+                    } else if (jj == this.h) {
+                        jj -= this.h;
+                    }
+                    if (this.alive[ii + jj * this.w] == next) {
+                        this.tmp[x + y * this.w] = next;
+                        changed = true;
                     }
                 }
             }
