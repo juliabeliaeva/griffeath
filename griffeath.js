@@ -31,11 +31,12 @@ function updateUI() {
     }
     $('clear').disabled = started;
     $('randomize').disabled = started;
-    $('settings').disabled = started;
     if (field.isVonNeumann) {
         $('radio-4').checked = true
+        $('radio-8').disabled = started;
     } else {
         $('radio-8').checked = true
+        $('radio-4').disabled = started;
     }
 }
 
