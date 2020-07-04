@@ -42,7 +42,7 @@ function updateUI() {
 
 function selectedInformation() {
     if (selectedX < 0 || selectedY < 0) return ""
-    return "[" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w]
+    return "Selected: [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w]
 }
 
 class Field {
