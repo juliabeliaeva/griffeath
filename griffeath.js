@@ -26,7 +26,7 @@ $('cell').onchange = function() {
     if (cell != newValue) {
         cell = newValue;
         field = createField(canvas, cell);
-        pixels = createPixels(ctx, field, cell);
+        pixels = createPixels(canvas);
         randomize();
         iteration = 0;
         render();
@@ -60,7 +60,7 @@ function getInformation() {
 
     var selectionInfo = "";
     if (selectedX >= 0 && selectedY >= 0) {
-       selectionInfo = "Selected [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w];
+       selectionInfo = "Selected [" + selectedX % field.w + ", " + selectedY % field.h + "] = " + field.getAlive(selectedX, selectedY);
     }
 
     var iterationInfo = "";
@@ -150,6 +150,14 @@ class Field {
             this.alive[i] = 0;
         }
     }
+
+    getAlive(x, y) {
+        return this.alive[(x % this.w) + (y % this.h) * this.w];
+    }
+
+    setAlive(x, y, value) {
+        this.alive[(x % this.w) + (y % this.h) * this.w] = value % this.n;
+    }
 }
 
 var canvas = $('game');
@@ -157,10 +165,10 @@ canvas.width  = window.innerWidth;
 canvas.height = window.innerHeight;
 canvas.addEventListener("click", onClick, false);
 canvas.addEventListener("mousemove", onHover, false);
-var ctx = canvas.getContext('2d');
+
 var cell = 5;
 var field = createField(canvas, cell);
-var pixels = createPixels(ctx, field, cell);
+var pixels = createPixels(canvas);
 
 var selectedX = -1;
 var selectedY = -1;
@@ -185,24 +193,30 @@ function clock() {
 }
 
 function createField(canvas, cell) {
-    return new Field(Math.ceil(canvas.width / cell), Math.ceil(canvas.height / cell));
+    return new Field(Math.floor(canvas.width / cell), Math.floor(canvas.height / cell));
 }
 
-function createPixels(ctx, field, cell) {
-    var p = ctx.createImageData(field.w * cell, field.h * cell);
-    for (var i = 0; i < field.w * field.h * cell * cell; i++) {
-        p.data[i * 4 + 3] = 255;
+function createPixels(canvas) {
+    var p = canvas.getContext('2d').createImageData(canvas.width, canvas.height);
+    for (var i = 0; i < canvas.width * canvas.height; i++) {
+        p.data[i * 4 + 3] = 255; // set alpha value
     }
     return p;
 }
 
 function render() {
-    for (var x = 0; x < field.w; x++) {
-        for (var y = 0; y < field.h; y++) {
-            var color = (Math.floor(field.alive[x + y * field.w] * 255 / field.n)) % 255;
+    var extW = Math.ceil(canvas.width / cell);
+    var extH = Math.ceil(canvas.height / cell);
+    for (var x = 0; x < extW; x++) {
+        for (var y = 0; y < extH; y++) {
+            var color = (Math.floor(field.getAlive(x, y) * 255 / field.n)) % 255;
             for (var i = 0; i < cell; i++) {
+                var canvasX = x * cell + i;
+                if (canvasX >= canvas.width) break;
                 for (var j = 0; j < cell; j++) {
-                    var pixel = x * cell + i + ((y * cell + j) * field.w * cell);
+                    var canvasY = y * cell + j;
+                    if (canvasY >= canvas.height) break;
+                    var pixel = canvasX + (canvasY * canvas.width);
                     for (var c = 0; c < 3; c++) {
                         pixels.data[pixel * 4 + c] = color;
                     }
@@ -214,6 +228,7 @@ function render() {
 }
 
 function updateCanvas() {
+    var ctx = canvas.getContext('2d');
     ctx.putImageData(pixels, 0, 0);
 
     if (selectedX < 0 || selectedY < 0) return;
@@ -251,7 +266,7 @@ function onClick(e) {
     x = location.x;
     y = location.y;
 
-    field.alive[x + y * field.w] = (field.alive[x + y * field.w] + 1) % field.n;
+    field.setAlive(x, y, field.getAlive(x, y) + 1);
 
     iteration = 0;
     render();
