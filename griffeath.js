@@ -12,8 +12,8 @@ $('randomize').onclick = function() {
     randomize();
 };
 $('radio-8').onchange = function() {
-    var value = document.querySelector('input[name="neighborhood"]:checked').value
-    field.setVonNeumannNeighborhood(value == "4")
+    var value = document.querySelector('input[name="neighborhood"]:checked').value;
+    setVonNeumannNeighborhood(value == "4");
 }
 $('radio-4').onchange = $('radio-8').onchange
 
@@ -210,6 +210,7 @@ function onClick(e) {
 
     field.alive[x + y * field.w] = (field.alive[x + y * field.w] + 1) % field.n;
 
+    iteration = 0;
     render();
     updateUI();
 }
@@ -224,9 +225,14 @@ function onHover(e) {
     updateUI();
 }
 
+function setVonNeumannNeighborhood(isVonNeumann) {
+    field.setVonNeumannNeighborhood(isVonNeumann);
+    iteration = 0;
+    updateUI();
+}
+
 function onStart() {
     started = !started;
-    if (started) iteration = 0;
     updateUI();
 }
 
