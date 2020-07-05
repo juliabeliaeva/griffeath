@@ -19,10 +19,10 @@ $('radio-4').onchange = $('radio-8').onchange
 
 function updateUI() {
     if (started) {
-        $('start').value = "Pause"
+        $('start').value = "Pause";
         $('info').innerHTML = "Iteration " + iteration + "<br/>" + selectedInformation();
     } else {
-        $('start').value = "Play"
+        $('start').value = "Play";
         if (iteration == 0) {
             $('info').innerHTML = selectedInformation();
         } else {
@@ -32,17 +32,17 @@ function updateUI() {
     $('clear').disabled = started;
     $('randomize').disabled = started;
     if (field.isVonNeumann) {
-        $('radio-4').checked = true
+        $('radio-4').checked = true;
         $('radio-8').disabled = started;
     } else {
-        $('radio-8').checked = true
+        $('radio-8').checked = true;
         $('radio-4').disabled = started;
     }
 }
 
 function selectedInformation() {
-    if (selectedX < 0 || selectedY < 0) return ""
-    return "Selected: [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w]
+    if (selectedX < 0 || selectedY < 0) return "";
+    return "Selected: [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w];
 }
 
 class Field {
@@ -61,9 +61,9 @@ class Field {
 
     getNeighborhood(value) {
         if (value) {
-            return [[0, -1], [0, 1], [1, 0], [-1, 0]]
+            return [[0, -1], [0, 1], [1, 0], [-1, 0]];
         } else {
-            return [[-1, -1], [-1, 1], [1, -1], [1, 1], [0, -1], [0, 1], [1, 0], [-1, 0]]
+            return [[-1, -1], [-1, 1], [1, -1], [1, 1], [0, -1], [0, 1], [1, 0], [-1, 0]];
         }
     }
 
@@ -196,13 +196,13 @@ function getLocation(e) {
     x = Math.max(0, Math.floor(x / cell));
     y = Math.max(0, Math.floor(y / cell));
 
-    return {x: x, y: y}
+    return {x: x, y: y};
 }
 
 function onClick(e) {
     if (started) return;
 
-    var location = getLocation(e)
+    var location = getLocation(e);
     x = location.x;
     y = location.y;
 
@@ -214,7 +214,7 @@ function onClick(e) {
 }
 
 function onHover(e) {
-    var location = getLocation(e)
+    var location = getLocation(e);
 
     selectedX = location.x;
     selectedY = location.y;
