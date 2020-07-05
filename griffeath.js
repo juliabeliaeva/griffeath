@@ -36,15 +36,10 @@ $('cell').onchange = function() {
 function updateUI() {
     if (started) {
         $('start').value = "Pause";
-        $('info').innerHTML = "Iteration " + iteration + "<br/>" + selectedInformation();
     } else {
         $('start').value = "Play";
-        if (iteration == 0) {
-            $('info').innerHTML = selectedInformation();
-        } else {
-            $('info').innerHTML = "Stopped after " + iteration + " iterations" + "<br/>" + selectedInformation();
-        }
     }
+    $('info').innerHTML = getInformation();
     $('clear').disabled = started;
     $('randomize').disabled = started;
     if (field.isVonNeumann) {
@@ -60,9 +55,24 @@ function updateUI() {
     $('cell').disabled = started
 }
 
-function selectedInformation() {
-    if (selectedX < 0 || selectedY < 0) return "";
-    return "Selected: [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w];
+function getInformation() {
+    var fieldInfo = "Field size " + field.w + "x" + field.h;
+
+    var selectionInfo = "";
+    if (selectedX >= 0 && selectedY >= 0) {
+       selectionInfo = "Selected [" + selectedX + ", " + selectedY + "] = " + field.alive[selectedX + selectedY * field.w];
+    }
+
+    var iterationInfo = "";
+    if (started) {
+        iterationInfo = "Iteration " + iteration;
+    } else {
+        if (iteration > 0) {
+            iterationInfo = "Stopped after " + iteration + " iterations";
+        }
+    }
+
+    return fieldInfo + "<br/>" + selectionInfo + "<br/>" + iterationInfo;
 }
 
 class Field {
