@@ -200,8 +200,6 @@ function getLocation(e) {
 }
 
 function onClick(e) {
-    console.log("click")
-
     if (started) return;
 
     var location = getLocation(e)
