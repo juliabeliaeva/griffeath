@@ -16,6 +16,22 @@ $('radio-8').onchange = function() {
     setVonNeumannNeighborhood(value == "4");
 }
 $('radio-4').onchange = $('radio-8').onchange
+$('nstates').onchange = function() {
+    field.setN($('nstates').value);
+    iteration = 0;
+    render();
+}
+$('cell').onchange = function() {
+    var newValue = $('cell').value;
+    if (cell != newValue) {
+        cell = newValue;
+        field = createField(canvas, cell);
+        pixels = createPixels(ctx, field, cell);
+        randomize();
+        iteration = 0;
+        render();
+    }
+}
 
 function updateUI() {
     if (started) {
@@ -38,6 +54,10 @@ function updateUI() {
         $('radio-8').checked = true;
         $('radio-4').disabled = started;
     }
+    $('nstates').value = field.n
+    $('nstates').disabled = started
+    $('cell').value = cell
+    $('cell').disabled = started
 }
 
 function selectedInformation() {
@@ -57,6 +77,13 @@ class Field {
 
     setVonNeumannNeighborhood(value) {
         this.isVonNeumann = value;
+    }
+
+    setN(n) {
+        this.n = n;
+        for (var i = 0; i < this.w * this.h; i++) {
+            this.alive[i] = this.alive[i] % this.n;
+        }
     }
 
     getNeighborhood(value) {
@@ -122,12 +149,8 @@ canvas.addEventListener("click", onClick, false);
 canvas.addEventListener("mousemove", onHover, false);
 var ctx = canvas.getContext('2d');
 var cell = 5;
-var field = new Field(Math.ceil(canvas.width / cell), Math.ceil(canvas.height / cell));
-
-var pixels = ctx.createImageData(field.w * cell, field.h * cell);
-for (var i = 0; i < field.w * field.h * cell * cell; i++) {
-   pixels.data[i * 4 + 3] = 255;
-}
+var field = createField(canvas, cell);
+var pixels = createPixels(ctx, field, cell);
 
 var selectedX = -1;
 var selectedY = -1;
@@ -149,6 +172,18 @@ function clock() {
         started = false;
     }
     updateUI();
+}
+
+function createField(canvas, cell) {
+    return new Field(Math.ceil(canvas.width / cell), Math.ceil(canvas.height / cell));
+}
+
+function createPixels(ctx, field, cell) {
+    var p = ctx.createImageData(field.w * cell, field.h * cell);
+    for (var i = 0; i < field.w * field.h * cell * cell; i++) {
+        p.data[i * 4 + 3] = 255;
+    }
+    return p;
 }
 
 function render() {

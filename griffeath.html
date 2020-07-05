@@ -65,6 +65,24 @@
         margin-left: auto;
         margin-right: auto;
     }
+
+    input[type=number] {
+        font-size: 12px;
+        width: 40px;
+        background-color: rgba(0, 0, 0, 0);
+        font-family: Arial;
+        color: #ffffff;
+        -moz-border-radius: 1px;
+        -webkit-border-radius: 1px;
+	    border-radius:1px;
+	    text-align:center;
+	    border:1px solid white;
+    }
+
+    label.number {
+        display: inline-block;
+        width: 100px;
+    }
 </style>
 
 <body>
@@ -77,6 +95,15 @@
             <br/>
             <input type="radio" name="neighborhood" id="radio-4" value="4"/>
             <label for="radio-4">4-neighborhood (von Neumann)</label>
+        </form>
+    </div>
+    <div class="panel">
+        <form>
+            <label class="number" for="nstates">Number of states:</label>
+            <input class="number" type="number" id="nstates" name="nstates" min="2" max="50">
+            <br/>
+            <label class="number" for="cell">Cell size:</label>
+            <input class="number" type="number" id="cell" name="cell" min="2" max="100">
         </form>
     </div>
     <form id="controls" action="">
