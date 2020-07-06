@@ -25,7 +25,7 @@ $('cell').onchange = function() {
     var newValue = $('cell').value;
     if (cell != newValue) {
         cell = newValue;
-        field = createField(canvas, cell);
+        field = createField(canvas, cell, field.n);
         pixels = createPixels(canvas);
         randomize();
         iteration = 0;
@@ -76,10 +76,10 @@ function getInformation() {
 }
 
 class Field {
-    constructor(width, height) {
+    constructor(width, height, n) {
         this.w = width;
         this.h = height;
-        this.n = 15;
+        this.n = n;
         this.alive = new Array(this.w * this.h);
         this.tmp = new Array(this.w * this.h);
         this.isVonNeumann = true;
@@ -167,7 +167,7 @@ canvas.addEventListener("click", onClick, false);
 canvas.addEventListener("mousemove", onHover, false);
 
 var cell = 5;
-var field = createField(canvas, cell);
+var field = createField(canvas, cell, 15);
 var pixels = createPixels(canvas);
 
 var selectedX = -1;
@@ -192,8 +192,8 @@ function clock() {
     updateUI();
 }
 
-function createField(canvas, cell) {
-    return new Field(Math.floor(canvas.width / cell), Math.floor(canvas.height / cell));
+function createField(canvas, cell, n) {
+    return new Field(Math.floor(canvas.width / cell), Math.floor(canvas.height / cell), n);
 }
 
 function createPixels(canvas) {
